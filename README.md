@@ -1,34 +1,119 @@
 # AI Skills
 
-个人 AI Agent Skill 集合（去个人化分享版）。
+这是一批我在日常工作里真实用起来的 AI Agent 技能，挑出来、洗掉个人信息后分享到这里。
 
-本仓库是产出物同步管道（TWK076）的**公版镜像**：从日常使用的 skill 里挑选、
-去除个人信息与内部口径后同步到这里，与公司内部 AI 市场（ai-market）发布同源。
+不是 demo，也不是收藏夹——每个都是在真实任务里被反复用过、踩过坑之后沉淀下来的。
+每个目录是一个完整的能力包（`SKILL.md` + 脚本 + 参考文档），自带使用说明。
 
 ## 安装
 
-把 `skills/<名称>/` 整个目录复制到你的 skills 目录（如 `~/.claude/skills/`、`~/.codex/skills/`），
-Agent 即可自动识别（每个 skill 都是一个 SKILL.md 驱动的能力包）。
-
-## 清单
-
-| Skill | 说明 |
-|-------|------|
-| [ai-content-verify](skills/ai-content-verify/) | AI 内容真伪核验工作流编排器 - 自动核验外部 AI 文章/论坛帖的真实性和技术可行性，并对比现有 Skill 体系判断是否值得补足。触发词：「核验 AI 内容」「这个 AI 工具有真的吗」「评估  |
-| [business-report-structure](skills/business-report-structure/) | 汇报结构路由与模板库：先判断汇报场景，再选结构模板。分析型汇报用「背景→问题→假设→论据→总结→backup」；决策型汇报（高层、时间紧、要拍板）用决策版「决策点→方案总览→WHY/WHAT/HOW  |
-| [cdp-page-fetch](skills/cdp-page-fetch/) | 裸 CDP（9222）+ Runtime.evaluate 在「已登录页面」里直接调内部接口取数，复用登录态、不依赖 API token 发放。含 iframe native fetch + JS 层 |
-| [de-ai-ify](skills/de-ai-ify/) | 文件提交前去 AI 化处理——洗掉 AI 腔、啰嗦表达、结构化痕迹、个人电脑信息。触发词：「去 AI 化」「洗 AI 味」「de-ai」「提交前洗一遍」 |
-| [doc-audit](skills/doc-audit/) | 生成检核文档 - 回顾对话中的文档/方案要求，生成标准化检核文档供检核agent审核 |
-| [easyocr-image-text](skills/easyocr-image-text/) | 用 EasyOCR 从图片/截图提取文字（中英文，支持中文路径与批量文件夹）。当用户说"读这张图/提取图片文字/OCR/图片转文字/识别图片里的字"时使用。 |
-| [goal-gate](skills/goal-gate/) | Goal 模式就绪闸门 - 锁定项目文件夹，对 goal.md + To-Do 文档.md（+ spec.md）做清晰度评分，通过追问补缺直至 ≥90 分才放行 Goal 模式。触发词：「能不能开跑」 |
-| [project-folder-init](skills/project-folder-init/) | 标准项目文件夹脚手架生成器，支持两种变体：①通用项目脚手架（goal.md / To-Do 文档.md / 进展看板.html / PRD-进展看板.md / 任务状态.json / 资料文件夹）；② |
-| [report-doc-standard-workflow](skills/report-doc-standard-workflow/) | 汇报文档标准生产流程（7 步 + 验证闸门 + 文件夹结构）。当用户要做「业务汇报/分析报告/周报/专题汇报」类文档，或创建/发布任何含数据的协作平台文档（效果评估/阶段复盘/双周报/数据看板说明等） |
-| [task-edit](skills/task-edit/) | 待办工具清单任务编辑 - 安全修改任务字段（标题/标签/日期/内容等），核心是「读→合并→写回」三步避免 --tags 覆盖丢标签。当需要改任务标签、改标题、补日期、或批量修字段时使用。触发词：「改一 |
-| [wechat-fetcher](skills/wechat-fetcher/) | 微信公众号文章抓取与内容提取工具。使用当需要获取公众号文章内容、提取文章正文、保存为 Markdown 格式时使用。支持自动提取标题、公众号名称、发布时间和正文内容。 |
-| [xlsx-data-analysis](skills/xlsx-data-analysis/) | Excel 数据分析工具 - 使用 xlsx2csv 命令行工具将 xlsx 转换为 CSV 格式，便于后续处理和分析。触发词：分析 xlsx 数据、Excel 转 CSV、xlsx 转换、读取 Ex |
+把感兴趣的技能目录复制到你的 skills 目录（如 `~/.claude/skills/`、`~/.codex/skills/`），
+Agent 会自动识别。也可以只读 `SKILL.md` 当做事方法参考。
 
 ---
 
-*最后同步：2026-11-25 11:37（共 12 个）*
+## ai-content-verify — 这篇吹捧文，真的假的？
 
-> 同步管道：每周自动选品 → 去个人化 → 体检 → 打包 → 发布 AI 市场 → 镜像 GitHub。
+刷到一篇「某工具强到离谱」的帖子，是干货还是营销？这个 skill 按证据链排查：仓库真的存在吗、作者背景是谁、样例有没有注水、帖子里有没有自承句，最后给一个带证据的可信度判定，而不是一个感觉。
+
+> 帖子 / 文章链接 → 带证据的可信度报告
+
+`skills/ai-content-verify/`
+
+## business-report-structure — 内容不变，讲法分两种
+
+同一份内容，给同事评审和给老板拍板是两种讲法。这个 skill 先判断场景再给结构：分析型（背景 → 问题 → 假设 → 论据 → 结论），还是决策型（决策点 → 方案 → 投入产出 → 回扣决策），后者额外附一份 11+1 检核清单。
+
+> 「周五给 VP 讲方案」→ 决策版大纲 + 自检清单
+
+`skills/business-report-structure/`
+
+## cdp-page-fetch — 借登录态直接取数
+
+数据只在登录后才可见的平台页面上，没有 API、拿不到 token，之前只能模拟点击——慢还脆弱。这个 skill 换一条路：借浏览器已有的登录态，在页面里直接发请求取数，快 1~2 个数量级。含两条铁律（临时 iframe + JS 硬超时）和一张排错对照表。
+
+> 登录后可见的页面 + 已知接口 → 批量数据（不点击、不翻页）
+
+`skills/cdp-page-fetch/`
+
+## de-ai-ify — 把「AI 味」洗掉
+
+一份 3000 字的稿子发出去，对方扫两眼：「这是 AI 写的吧？」——「值得注意」「综上所述」、什么都排三点、满屏破折号。内容没错，就是一眼假。这个 skill 有一份 AI 高频痕迹清单，逐条洗掉，改完还带自评分。
+
+> AI 草稿 → 自然版本 + 逐条修改说明
+
+`skills/de-ai-ify/`
+
+## doc-audit — 交稿前的独立审稿人
+
+方案写完，自己越看越顺眼，但心里没底。把它当独立审稿人用：回头读一遍原始需求，逐条核对成稿，产出一份标准检核文档（通过项 / 问题项 / 建议），你或另一个 AI 照着改就行。
+
+> 原始需求 + 成稿 → 检核报告（问题清单 + 修改建议）
+
+`skills/doc-audit/`
+
+## easyocr-image-text — 截图文字，本地提取
+
+一张截图里的文字要转出来，但内容不能传到云端。本地 OCR 完全离线跑，单张、整文件夹批量都行，连中文路径这种坑都处理了。日常「看图说内容」可以直接用多模态模型；这个的独特价值是精确取字 + 完全不出本机。
+
+> 图片 / 截图文件夹 → 可复制的文本（txt）
+
+`skills/easyocr-image-text/`
+
+## goal-gate — 开工前的清晰度闸门
+
+活干到一半才发现「需求没想清楚」，返工。这个 skill 让动手前先过闸：六个维度给目标打分（交付物 / 步骤 / 取数 / 目标 / 资料 / 依赖），不到 90 分不许开跑，缺什么当场列成补齐清单。
+
+> 一段模糊需求 → 清晰度评分 + 待补清单
+
+`skills/goal-gate/`
+
+## project-folder-init — 新项目一键起架子
+
+每个项目开工最烦的前十分钟：目录怎么建、目标写哪、待办和进展放哪。这个 skill 一键生成标准项目脚手架——目标 / 待办 / 进展看板 / 资料目录，两种变体（通用项目、汇报项目）按需选。
+
+> 「给新项目建个文件夹」→ 标准结构 + 模板文件
+
+`skills/project-folder-init/`
+
+## report-doc-standard-workflow — 汇报文档的标准生产线
+
+写季度汇报写到一半发现数据口径混了——9 月的数和 10 月的数拼在同一张表里，整篇返工。这个 skill 把汇报拆成 7 步流水线：背景 → 问题 → 假设 → 数据 BRD → Excel → 报告 → 归档，每一步带一道验证闸门，不过闸不许进下一步。
+
+> 「帮我写阶段效果评估」→ 完整项目文件夹（大纲 / BRD / 数据 / 报告）
+
+`skills/report-doc-standard-workflow/`
+
+## task-edit — 改任务标签不丢标签
+
+给任务改标签，改完发现原来的标签全没了——因为更新接口的 tags 是覆盖而不是追加。这个 skill 用「读 → 本地合并 → 整体写回」三步法，改完再做四项回读核对，防止改坏。
+
+> 任务挂着 A、B 两个标签，想加 C → 改完 A、B、C 都在
+
+`skills/task-edit/`
+
+## wechat-fetcher — 公众号文章，干净存档
+
+看到一篇好文章想存下来，手动复制过去排版全丢。这个工具一键抓取正文，连标题、公众号名、发布时间一起存成干净的 Markdown / JSON，方便进笔记或知识库。
+
+> 文章链接 → Markdown + JSON（结构化）
+
+`skills/wechat-fetcher/`
+
+## xlsx-data-analysis — xlsx 一行转 CSV
+
+拿到一个多 sheet 的 Excel，要丢进只吃 CSV 的流程里。xlsx2csv 一行命令解决；这个 skill 把常用参数（指定 sheet、防中文乱码的编码、批量转换）和踩过的坑都整理好了。
+
+> 多 sheet .xlsx → 干净 CSV
+
+`skills/xlsx-data-analysis/`
+
+---
+
+## 说明
+
+- 这些技能与我的公司内部 AI 市场发布同源，此处为公开镜像（内部专属技能不在此列）。
+- 内容已做去个人信息处理；如发现遗漏，欢迎提出。
+- 每周随我的产出物同步管道自动更新。
+
+*最后同步：2026-11-25 13:46（共 12 个）*
