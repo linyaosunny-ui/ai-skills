@@ -1,0 +1,12 @@
+{
+  "name": "wechat-fetcher",
+  "version": "1.0.0",
+  "description": "微信公众号文章抓取与内容提取工具",
+  "main": "scripts/wechat_fetch.py",
+  "scripts": {
+    "test": "python scripts/wechat_fetch.py"
+  },
+  "keywords": ["wechat", "crawler", "article", "fetcher"],
+  "author": "OpenClaw",
+  "license": "MIT"
+}
